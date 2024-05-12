@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ARCH: ['x86_64', 'i386', 'armhf', 'aarch64']
+        ARCH: ['x86_64', 'i386', 'armhf', 'aarch64', 'loongarch64']
 
     env:
       ARCH: ${{ matrix.ARCH }}
