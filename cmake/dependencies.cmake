@@ -53,18 +53,13 @@ if(NOT USE_SYSTEM_MKSQUASHFS)
 
     ExternalProject_Add(mksquashfs
         GIT_REPOSITORY https://github.com/plougher/squashfs-tools/
-        GIT_TAG 4.4
+        GIT_TAG 4.6.1
         UPDATE_COMMAND ""  # Make sure CMake won't try to fetch updates unnecessarily and hence rebuild the dependency every time
         CONFIGURE_COMMAND ${SED} -i "s|CFLAGS += -DXZ_SUPPORT|CFLAGS += ${mksquashfs_cflags}|g" <SOURCE_DIR>/squashfs-tools/Makefile
         COMMAND ${SED} -i "s|LIBS += -llzma|LIBS += -Bstatic ${mksquashfs_ldflags}|g" <SOURCE_DIR>/squashfs-tools/Makefile
-        # COMMAND echo "fixing.............${SED}"
-        # COMMAND ls -l
-        # COMMAND cat squashfs-tools/mksquashfs.h
-        COMMAND ${SED} -i "s/struct cache \\*b/\\nextern struct cache *b/g" squashfs-tools/mksquashfs.h
-        # COMMAND echo "replace over............."
-        # COMMAND cat squashfs-tools/mksquashfs.h
         COMMAND ${SED} -i "s|install: mksquashfs unsquashfs|install: mksquashfs|g" squashfs-tools/Makefile
         COMMAND ${SED} -i "/cp unsquashfs/d" squashfs-tools/Makefile
+        COMMAND echo "" > generate-manpages/install-manpages.sh
         BUILD_COMMAND env CC=${CC} CXX=${CXX} LDFLAGS=${LDFLAGS} ${MAKE} -C squashfs-tools/ XZ_SUPPORT=1 mksquashfs
         # ${MAKE} install unfortunately expects unsquashfs to be built as well, hence can't install the binary
         # therefore using built file in SOURCE_DIR
