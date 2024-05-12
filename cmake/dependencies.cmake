@@ -57,6 +57,12 @@ if(NOT USE_SYSTEM_MKSQUASHFS)
         UPDATE_COMMAND ""  # Make sure CMake won't try to fetch updates unnecessarily and hence rebuild the dependency every time
         CONFIGURE_COMMAND ${SED} -i "s|CFLAGS += -DXZ_SUPPORT|CFLAGS += ${mksquashfs_cflags}|g" <SOURCE_DIR>/squashfs-tools/Makefile
         COMMAND ${SED} -i "s|LIBS += -llzma|LIBS += -Bstatic ${mksquashfs_ldflags}|g" <SOURCE_DIR>/squashfs-tools/Makefile
+        # COMMAND echo "fixing.............${SED}"
+        # COMMAND ls -l
+        # COMMAND cat squashfs-tools/mksquashfs.h
+        COMMAND ${SED} -i "s/struct cache \\*b/\\nextern struct cache *b/g" squashfs-tools/mksquashfs.h
+        # COMMAND echo "replace over............."
+        # COMMAND cat squashfs-tools/mksquashfs.h
         COMMAND ${SED} -i "s|install: mksquashfs unsquashfs|install: mksquashfs|g" squashfs-tools/Makefile
         COMMAND ${SED} -i "/cp unsquashfs/d" squashfs-tools/Makefile
         BUILD_COMMAND env CC=${CC} CXX=${CXX} LDFLAGS=${LDFLAGS} ${MAKE} -C squashfs-tools/ XZ_SUPPORT=1 mksquashfs
