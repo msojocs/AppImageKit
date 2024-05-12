@@ -24,6 +24,10 @@ case "$ARCH" in
     armhf|aarch64)
         docker_dist=bionic
         ;;
+    "loongarch64")
+        export ARCH="loongarch64"
+        docker_dist=debian
+        ;;
     *)
         echo "Unknown architecture: $ARCH"
         exit 3
@@ -51,7 +55,7 @@ this_dir="$(readlink -f "$(dirname "$0")")"
 repo_root="$this_dir"/..
 
 # docker image name
-docker_image=quay.io/appimage/appimagebuild:"$docker_dist"-"${docker_arch:-$ARCH}"
+docker_image=ghcr.io/msojocs/appimagebuild:"$docker_dist"-"${docker_arch:-$ARCH}"
 # make sure it's up to date
 docker pull "$docker_image"
 
