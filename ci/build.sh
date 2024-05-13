@@ -88,15 +88,24 @@ if [[ "$CI" == "" ]] && [[ "$TERM" != "" ]]; then
 fi
 
 # https://github.com/AppImage/AppImageKit/issues/1084#issuecomment-726358829
-if [ `grep -c "static void \\*libhandle;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
-    sed -i "s/void \\*libhandle;/static void *libhandle;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
-fi
-if [ `grep -c "extern int have_libloaded;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
-    sed -i "s/int have_libloaded;/extern int have_libloaded;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
-fi
-if [ `grep -c "extern const char \\*load_library_errmsg;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
-    sed -i "s/const char \\*load_library_errmsg;/extern const char *load_library_errmsg;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
-fi
+# ERROR: 编译通过，但是会导致产物出现以下错误
+# dlsym(): error loading symbol from libfuse.so.2
+
+# AppImages require FUSE to run. 
+# You might still be able to extract the contents of this AppImage 
+# if you run it with the --appimage-extract option. 
+# See https://github.com/AppImage/AppImageKit/wiki/FUSE 
+# for more information
+# execv error: No such file or directory
+# if [ `grep -c "static void \\*libhandle;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
+#     sed -i "s/void \\*libhandle;/static void *libhandle;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
+# fi
+# if [ `grep -c "extern int have_libloaded;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
+#     sed -i "s/int have_libloaded;/extern int have_libloaded;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
+# fi
+# if [ `grep -c "extern const char \\*load_library_errmsg;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
+#     sed -i "s/const char \\*load_library_errmsg;/extern const char *load_library_errmsg;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
+# fi
 
 # build AppImageKit and appimagetool-"$ARCH".AppImage
 # TODO: make gnupg home available, e.g., through "-v" "$HOME"/.gnupg:/root/.gnupg
