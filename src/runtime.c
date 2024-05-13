@@ -685,6 +685,22 @@ int main(int argc, char *argv[]) {
         free(abspath);
     }
 
+    if(arg && strcmp(arg,"appimage-version")==0) {
+        fprintf(stderr,"Version: %s\n", GIT_COMMIT);
+        exit(0);
+    }
+
+    if(arg && (strcmp(arg,"appimage-updateinformation")==0 || strcmp(arg,"appimage-updateinfo")==0)) {
+        unsigned long offset = 0;
+        unsigned long length = 0;
+        appimage_get_elf_section_offset_and_length(appimage_path, ".upd_info", &offset, &length);
+        // fprintf(stderr, "offset: %lu\n", offset);
+        // fprintf(stderr, "length: %lu\n", length);
+        // print_hex(appimage_path, offset, length);
+        appimage_print_binary(appimage_path, offset, length);
+        exit(0);
+    }
+
     if (getenv("APPIMAGE_EXTRACT_AND_RUN") != NULL || (arg && strcmp(arg, "appimage-extract-and-run") == 0)) {
         char* hexlified_digest = NULL;
 
@@ -779,22 +795,6 @@ int main(int argc, char *argv[]) {
         free(prefix);
 
         exit(status);
-    }
-
-    if(arg && strcmp(arg,"appimage-version")==0) {
-        fprintf(stderr,"Version: %s\n", GIT_COMMIT);
-        exit(0);
-    }
-
-    if(arg && (strcmp(arg,"appimage-updateinformation")==0 || strcmp(arg,"appimage-updateinfo")==0)) {
-        unsigned long offset = 0;
-        unsigned long length = 0;
-        appimage_get_elf_section_offset_and_length(appimage_path, ".upd_info", &offset, &length);
-        // fprintf(stderr, "offset: %lu\n", offset);
-        // fprintf(stderr, "length: %lu\n", length);
-        // print_hex(appimage_path, offset, length);
-        appimage_print_binary(appimage_path, offset, length);
-        exit(0);
     }
 
     if(arg && strcmp(arg,"appimage-signature")==0) {

@@ -87,6 +87,17 @@ if [[ "$CI" == "" ]] && [[ "$TERM" != "" ]]; then
     common_docker_opts+=("-t")
 fi
 
+# https://github.com/AppImage/AppImageKit/issues/1084#issuecomment-726358829
+if [ `grep -c "static void \\*libhandle;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
+    sed -i "s/void \\*libhandle;/static void *libhandle;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
+fi
+if [ `grep -c "extern int have_libloaded;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
+    sed -i "s/int have_libloaded;/extern int have_libloaded;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
+fi
+if [ `grep -c "extern const char \\*load_library_errmsg;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
+    sed -i "s/const char \\*load_library_errmsg;/extern const char *load_library_errmsg;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
+fi
+
 # build AppImageKit and appimagetool-"$ARCH".AppImage
 # TODO: make gnupg home available, e.g., through "-v" "$HOME"/.gnupg:/root/.gnupg
 # TODO: this ^ won't work since we don't build as root any more
@@ -103,7 +114,7 @@ docker run --rm \
 # outside CI environments, we use APPIMAGE_EXTRACT_AND_RUN instead, which is safer, but gives less meaningful results
 # note: FUSE and QEMU don't like each other, so if we're running in emulated mode, we can't run these tests
 # therefore, by default, on ARM, these tests are not run
-if [[ "$ARCH" != "arm"* ]] && [[ "$ARCH" != "aarch"* ]]; then
+if [[ "$ARCH" != "arm"* ]] && [[ "$ARCH" != "aarch"* ]] && [[ "$ARCH" != "loong"* ]]; then
     docker_test_opts=("${common_docker_opts[@]}")
 
     if [[ "$CI" != "" ]]; then
