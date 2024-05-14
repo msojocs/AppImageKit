@@ -87,6 +87,19 @@ if [[ "$CI" == "" ]] && [[ "$TERM" != "" ]]; then
     common_docker_opts+=("-t")
 fi
 
+if [ `grep -c "extern void \\*libhandle;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
+    sed -i "s/void \\*libhandle;/extern void *libhandle;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
+fi
+if [ `grep -c "void \\*libhandle" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.c` -eq '0' ];then
+    sed -i "s/int have_libloaded = 0;/int have_libloaded = 0;\\nvoid *libhandle;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.c
+fi
+if [ `grep -c "extern int have_libloaded;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
+    sed -i "s/int have_libloaded;/extern int have_libloaded;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
+fi
+if [ `grep -c "extern const char \\*load_library_errmsg;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
+    sed -i "s/const char \\*load_library_errmsg;/extern const char *load_library_errmsg;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
+fi
+
 # build AppImageKit and appimagetool-"$ARCH".AppImage
 # TODO: make gnupg home available, e.g., through "-v" "$HOME"/.gnupg:/root/.gnupg
 # TODO: this ^ won't work since we don't build as root any more
