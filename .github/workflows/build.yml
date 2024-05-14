@@ -21,7 +21,7 @@ jobs:
           submodules: 'recursive'
 
       - name: Set up QEMU integration for Docker
-        run: docker run --rm --privileged zhangguanzhang/qemu-user-static --reset -p yes
+        run: docker run --rm --privileged loongcr.lcpu.dev/multiarch/archlinux --reset -p yes
 
       - name: Build 
         run: |
