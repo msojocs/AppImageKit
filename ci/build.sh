@@ -99,6 +99,13 @@ fi
 if [ `grep -c "extern const char \\*load_library_errmsg;" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h` -eq '0' ];then
     sed -i "s/const char \\*load_library_errmsg;/extern const char *load_library_errmsg;/" $repo_root/lib/libappimage/src/patches/squashfuse_dlopen.h
 fi
+if [[ "$ARCH" == loong* ]];then
+    # echo "loongarch64"
+    if [ `grep -c "set(EXTRA_CONFIGURE_FLAGS" $repo_root/lib/libappimage/cmake/dependencies.cmake` -eq '0' ];then
+        # echo "find"
+        sed -i 's/message(STATUS "Downloading and building xz")/message(STATUS "Downloading and building xz")\n        set(EXTRA_CONFIGURE_FLAGS "--host=loongarch64-unknown-linux-gnu" "--build=loongarch64-unknown-linux-gnu" "--target=loongarch64-unknown-linux-gnu" CACHE STRING "" FORCE)/' $repo_root/lib/libappimage/cmake/dependencies.cmake
+    fi
+fi
 
 # build AppImageKit and appimagetool-"$ARCH".AppImage
 # TODO: make gnupg home available, e.g., through "-v" "$HOME"/.gnupg:/root/.gnupg
