@@ -101,10 +101,8 @@ if [ `grep -c "extern const char \\*load_library_errmsg;" $repo_root/lib/libappi
 fi
 if [[ "$ARCH" == loong* ]];then
     # echo "loongarch64"
-    if [ `grep -c "set(EXTRA_CONFIGURE_FLAGS" $repo_root/lib/libappimage/cmake/dependencies.cmake` -eq '0' ];then
-        # echo "find"
-        sed -i 's/message(STATUS "Downloading and building xz")/message(STATUS "Downloading and building xz")\n        set(EXTRA_CONFIGURE_FLAGS "--host=loongarch64-unknown-linux-gnu" "--build=loongarch64-unknown-linux-gnu" "--target=loongarch64-unknown-linux-gnu" CACHE STRING "" FORCE)/' $repo_root/lib/libappimage/cmake/dependencies.cmake
-    fi
+    sed -i 's/xz-5.2.3.tar.gz/xz-5.4.6.tar.gz/' $repo_root/lib/libappimage/cmake/dependencies.cmake
+    sed -i 's/a5eb4f707cf31579d166a6f95dbac45cf7ea181036d1632b4f123a4072f502f8d57cd6e7d0588f0bf831a07b8fc4065d26589a25c399b95ddcf5f73435163da6/b08a61d8d478d3b4675cb1ddacdbbd98dc6941a55bcdd81a28679e54e9367d3a595fa123ac97874a17da571c1b712e2a3e901c2737099a9d268616a1ba3de497/' $repo_root/lib/libappimage/cmake/dependencies.cmake
 fi
 
 # build AppImageKit and appimagetool-"$ARCH".AppImage
